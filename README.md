@@ -142,6 +142,34 @@ cd ..
 rake build:all
 ```
 
+
+## 🏗️ Architecture Overview
+
+This application is built with a **Rails API gateway**, a **Python AI Agent**, and the **Shopify Admin + ShopifyQL APIs**.  
+Below is the high-level architecture diagram describing data flow and component responsibilities.
+
+```mermaid
+flowchart TD
+
+    A[Shopify Store<br/>(Orders, Products, Inventory)] 
+        -->|OAuth + API Access| B[Rails API Gateway]
+
+    B -->|POST /api/v1/questions<br/>{question, store_id}| C[Python AI Service<br/>(FastAPI / Flask)]
+
+    C --> C1[Intent Classifier<br/>(LLM)]
+    C1 --> C2[Planner / Tool Selector]
+    C2 --> C3[ShopifyQL Query Generator]
+    C3 -->|Execute Query| D[Shopify Admin API]
+
+    D -->|Raw JSON Data| C4[Result Processor<br/>(aggregation, trends)]
+    C4 --> C5[Natural Language Generator<br/>(LLM)]
+    C5 -->|answer + confidence| B
+
+    B --> E[Frontend / Client<br/>(Admin Panel / Chat UI)]
+
+
+
+
 ### Making your first API call
 
 You can use the [ShopifyAPI](https://github.com/Shopify/shopify-api-ruby) gem to start make authenticated Shopify API calls.
@@ -212,25 +240,6 @@ We fixed this issue with v3.4.0 of the CLI, so after updating it, you can make t
      ...
    ```
 
-### I'm seeing "App couldn't be loaded" error due to browser cookies
-
-- Ensure you're using the latest [shopify_app](https://github.com/Shopify/shopify_app/blob/main/README.md) gem that uses Session Tokens instead of cookies.
-  - See ["My app is still using cookies to authenticate"](https://github.com/Shopify/shopify_app/blob/main/docs/Troubleshooting.md#my-app-is-still-using-cookies-to-authenticate)
-- Ensure `shopify.app.toml` is present and contains up to date information for the app's redirect URLS. To reset/update this config, run
-
-```shell
-shopify app dev --reset
-```
-
-## Developer resources
-
-- [Introduction to Shopify apps](https://shopify.dev/docs/apps/getting-started)
-- [App authentication](https://shopify.dev/docs/apps/auth)
-- [Shopify CLI](https://shopify.dev/docs/apps/tools/cli)
-- [Shopify API Library documentation](https://github.com/Shopify/shopify-api-ruby/tree/main/docs)
-- [Shopify App Gem](https://github.com/Shopify/shopify_app/blob/main/README.md)
-- [Getting started with internationalizing your app](https://shopify.dev/docs/apps/best-practices/internationalization/getting-started)
-  - [i18next](https://www.i18next.com/)
     - [Configuration options](https://www.i18next.com/overview/configuration-options)
   - [react-i18next](https://react.i18next.com/)
     - [`useTranslation` hook](https://react.i18next.com/latest/usetranslation-hook)
