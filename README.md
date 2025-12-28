@@ -147,7 +147,6 @@ rake build:all
 
 This application uses a Rails API Gateway, a Python AI Agent, and Shopify APIs to answer natural-language questions using ShopifyQL.
 
-```mermaid
 flowchart TD
 
     A[Shopify Store\n(Orders, Products, Inventory)] 
@@ -165,7 +164,7 @@ flowchart TD
     C5 -->|answer + confidence| B
 
     B --> E[Frontend / Client\n(Chat UI / Admin Panel)]
-```
+
 
 
 
