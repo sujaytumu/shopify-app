@@ -145,27 +145,27 @@ rake build:all
 
 ## 🏗️ Architecture Overview
 
-This application is built with a **Rails API gateway**, a **Python AI Agent**, and the **Shopify Admin + ShopifyQL APIs**.  
-Below is the high-level architecture diagram describing data flow and component responsibilities.
+This application uses a Rails API Gateway, a Python AI Agent, and Shopify APIs to answer natural-language questions using ShopifyQL.
 
 ```mermaid
 flowchart TD
 
-    A[Shopify Store<br/>(Orders, Products, Inventory)] 
+    A[Shopify Store\n(Orders, Products, Inventory)] 
         -->|OAuth + API Access| B[Rails API Gateway]
 
-    B -->|POST /api/v1/questions<br/>{question, store_id}| C[Python AI Service<br/>(FastAPI / Flask)]
+    B -->|POST /api/v1/questions\n{question, store_id}| C[Python AI Service\n(FastAPI / Flask)]
 
-    C --> C1[Intent Classifier<br/>(LLM)]
+    C --> C1[Intent Classifier\n(LLM)]
     C1 --> C2[Planner / Tool Selector]
     C2 --> C3[ShopifyQL Query Generator]
-    C3 -->|Execute Query| D[Shopify Admin API]
+    C3 -->|Executes Query| D[Shopify Admin API]
 
-    D -->|Raw JSON Data| C4[Result Processor<br/>(aggregation, trends)]
-    C4 --> C5[Natural Language Generator<br/>(LLM)]
+    D -->|Raw Data JSON| C4[Result Processor\n(Aggregations, Trends)]
+    C4 --> C5[Natural Language Generator\n(LLM Output)]
     C5 -->|answer + confidence| B
 
-    B --> E[Frontend / Client<br/>(Admin Panel / Chat UI)]
+    B --> E[Frontend / Client\n(Chat UI / Admin Panel)]
+```
 
 
 
